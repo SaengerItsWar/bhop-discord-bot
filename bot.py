@@ -45,7 +45,7 @@ bot = commands.Bot(command_prefix='.') #BOT PREFIX
 
 CRSRECORDS = mydb.cursor()
  
-CRSRECORDS.execute("select auth, count(auth) as attended from playertimes group by auth order by 2 desc limit 10;")
+CRSRECORDS.execute("select auth, name, points order by points desc limit 10;")
  
 RECORD = CRSRECORDS.fetchall()
  
@@ -79,7 +79,7 @@ async def bvip(ctx, arg):
 @bot.command()
 async def map(ctx, arg):
     if ctx.message.channel.id == PLAYER_COMMANDS:
-        sql = "SELECT time, auth FROM playertimes WHERE map = '" + arg + "'"
+        sql = "SELECT time, auth FROM playertimes WHERE map = '" + arg + "' ORDER by 'time' ASC"
         crs = mydb.cursor(buffered=True)
         crs.execute(sql)
         maptime = crs.fetchone()
@@ -101,7 +101,7 @@ async def maps(ctx):
  
 @bot.command()
 async def top10(ctx):
-    if ctx.message.channel.id == 596815597942210570:
+    if ctx.message.channel.id == PLAYER_COMMANDS:
         embed = discord.Embed(
             title = "By number of records",
             description = "",
@@ -110,9 +110,9 @@ async def top10(ctx):
        
         user1 = SteamID(RECORD[0][0])
         user1 = user1.community_url
-        embed.set_thumbnail(url="SERVER_SQUARE_IMGURL")
+        embed.set_thumbnail(url= SERVER_SQUARE_IMGURL)
         embed.set_author(name="Players rank")
-        embed.add_field(name="1. " + urls[0], value="Records on server: " + str(RECORD[0][1]), inline=False)
+        embed.add_field(name="1. " + {urls}.format([]urls[0]), value="Records on server: " + str(RECORD[0][1]), inline=False)
         await ctx.send(embed=embed)
  
 @bot.command()
@@ -124,7 +124,7 @@ async def sinfo(ctx):
             colour = discord.Colour.green()
         )
  
-        embed.set_thumbnail(url="SERVER_SQUARE_IMGURL")
+        embed.set_thumbnail(url= SERVER_SQUARE_IMGURL )
         embed.set_author(name="SERVER STATS:")
         embed.add_field(name="Online players", value="{player_count}/{max_players}".format(**info), inline=False)
         embed.add_field(name="IP", value=SERVER_ADDRESS[0] + ":" + str(SERVER_ADDRESS[1]), inline=False)
@@ -138,7 +138,7 @@ async def sinfo(ctx):
  
 @bot.command()
 async def c(ctx, *args):
-    if ctx.message.channel.id == 597108276945092672:
+    if ctx.message.channel.id == CONSOLE_COMMANDS:
         bc = ""
         for warg in args:
             bc += warg
